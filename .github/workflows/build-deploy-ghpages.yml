@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/change_address
   workflow_dispatch:
 
 permissions:
