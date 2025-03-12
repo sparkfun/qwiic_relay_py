@@ -42,7 +42,7 @@
 #
 # pylint: disable=line-too-long, bad-whitespace, invalid-name
 #
-"""
+"""!
 qwiic_relay
 ===============
 Python module for the `SparkFun Qwiic Single Relay <https://www.sparkfun.com/products/15093>`_, `SparkFun Qwiic Quad Relay <https://www.sparkfun.com/products/15102>`_, `SparkFun Qwiic Dual Solid State Relay <https://www.sparkfun.com/products/16810>`_, `SparkFun Qwiic Quad Solid State Relay <https://www.sparkfun.com/products/16796>`_
@@ -50,7 +50,6 @@ Python module for the `SparkFun Qwiic Single Relay <https://www.sparkfun.com/pro
 This package can be used in conjunction with the overall `SparkFun qwiic Python Package <https://github.com/sparkfun/Qwiic_Py>`_
 
 New to qwiic? Take a look at the entire `SparkFun qwiic ecosystem <https://www.sparkfun.com/qwiic>`_.
-
 """
 #-----------------------------------------------------------------------------
 
@@ -86,6 +85,10 @@ _AVAILABLE_I2C_ADDRESSES = [
     QUAD_SOLID_STATE_RELAY_DEFUALT_ADDR,
     QUAD_SOLID_STATE_RELAY_JUMPER_CLOSE_ADDR]
 
+# Define commands for changing i2c address to
+SINGLE_CHANGE_ADDRESS = 0x03
+QUAD_CHANGE_ADDRESS   = 0xC7
+
 # Define the register offsets of each relay
 RELAY_ONE   = 1
 RELAY_TWO   = 2
@@ -114,15 +117,15 @@ STATUS_OFF = 0
 # from this module.
 
 class QwiicRelay(object):
-    """
+    """!
     QwiicRelay
 
-        :param address: The I2C address to use for the device.
+    @param address: The I2C address to use for the device.
                         If not provided, the default address is used.
-        :param i2c_driver: An existing i2c driver object. If not provided
+    @param i2c_driver: An existing i2c driver object. If not provided
                         a driver object is created.
-        :return: The Qwiic Relay device object.
-        :rtype: Object
+
+    @return **Object** The Qwiic Relay device object.
     """
     # Constructor
     device_name         = _DEFAULT_NAME
@@ -155,12 +158,10 @@ class QwiicRelay(object):
     # Is an actual board connected to our system?
 
     def is_connected(self):
-        """
-            Determine if the Qwiic Relay is connected to the system.
+        """!
+        Determine if the Qwiic Relay is connected to the system.
 
-            :return: True if the device is connected, otherwise False.
-            :rtype: bool
-
+        @return **bool** True if the device is connected, otherwise False.
         """
         return self._i2c.isDeviceConnected(self.address)
 
@@ -172,12 +173,10 @@ class QwiicRelay(object):
     # Initialize the system/validate the board.
     
     def begin(self):
-        """
-            Initialize the operation of the relay
+        """!
+        Initialize the operation of the relay
 
-            :return: Returns true of the initialization was successful, otherwise False.
-            :rtype: bool
-
+        @return **bool** Returns true of the initialization was successful, otherwise False.
         """
 
         # Basically return True if we are connected...
@@ -190,12 +189,12 @@ class QwiicRelay(object):
     # Turn's on a specific relay number, if we're using a single relay, do not pass in a relay number.
     
     def set_relay_on(self, relayNum=None):
-        """
-            Turn's on a relay,if we're using a single relay, do not pass in a relay number
+        """!
+        Turn's on a relay,if we're using a single relay, do not pass in a relay number
 
-            :param: The relay to turn on
-            :return: successful I2C transaction
-            :rtype: bool
+        @param : The relay to turn on
+
+        @return **bool** successful I2C transaction
         """
         if relayNum is None:
             return self._i2c.writeCommand(self.address, SINGLE_ON)
@@ -209,14 +208,31 @@ class QwiicRelay(object):
     # set_relay_off(relayNum)
     #
     # Turn's off a specific relay number, if we're using a single relay, do not pass in a relay number.
+
+    def change_address(self, newAddress, singleRelay=True):
+        """!
+        Change the I2C address of the relay
+
+        @param : The new address to change to
+        @param : If we're changing the address of a single or quad relay
+        """
+        if (newAddress < 0x07) or (newAddress > 0x78):
+            return
+        
+        if singleRelay:
+            return self._i2c.writeByte(self.address, SINGLE_CHANGE_ADDRESS, newAddress)
+        else:
+            return self._i2c.writeByte(self.address, QUAD_CHANGE_ADDRESS, newAddress)
+
+        self.address = newAddress
     
     def set_relay_off(self, relayNum=None):
-        """
-            Turn's off a relay,if we're using a single relay, do not pass in a relay number
+        """!
+        Turn's off a relay,if we're using a single relay, do not pass in a relay number
 
-            :param: The relay to turn off
-            :return: successful I2C transaction
-            :rtype: bool
+        @param : The relay to turn off
+
+        @return **bool** successful I2C transaction
         """
         
         if relayNum is None:
@@ -232,12 +248,12 @@ class QwiicRelay(object):
     #
     # Turn's on all relays. This command does nothing for the single relay    
     def set_all_relays_on(self):
-        """
-            Turn's on all relays. This command does nothing for the single relay
-            
-            :param: The relay to turn on
-            :return: successful I2C transaction
-            :rtype: bool
+        """!
+        Turn's on all relays. This command does nothing for the single relay
+
+        @param : The relay to turn on
+
+        @return **bool** successful I2C transaction
         """
         
         return self._i2c.writeCommand(self.address, TURN_ALL_ON)
@@ -248,12 +264,12 @@ class QwiicRelay(object):
     # Turn's off all relays. This command does nothing for the single relay
     
     def set_all_relays_off(self):
-        """
-            Turn's off all relays. This command does nothing for the single relay
-            
-            :param: The relay to turn off
-            :return: successful I2C transaction
-            :rtype: bool
+        """!
+        Turn's off all relays. This command does nothing for the single relay
+
+        @param : The relay to turn off
+
+        @return **bool** successful I2C transaction
         """
         
         return self._i2c.writeCommand(self.address, TURN_ALL_OFF)
@@ -265,14 +281,14 @@ class QwiicRelay(object):
     # A full cycle takes 1 second
     
     def set_slow_pwm(self, relayNum, pwmValue):
-        """
-            Sets the value for the slow PWM signal. Can be anywhere from 0 (off) to 120 (on).
+        """!
+        Sets the value for the slow PWM signal. Can be anywhere from 0 (off) to 120 (on).
             A full cycle takes 1 second.
-            
-            :param: The relay to set the PWM signal of
-            :param: The value of the PWM signal, a value between 0 and 120
-            :return: successful I2C transaction
-            :rtype: bool
+
+        @param : The relay to set the PWM signal of
+        @param : The value of the PWM signal, a value between 0 and 120
+
+        @return **bool** successful I2C transaction
         """
         for i in range(4):
             if self.address == self.available_addresses[i]:
@@ -286,12 +302,12 @@ class QwiicRelay(object):
     # Gets the value for the slow PWM signal. Can be anywhere from 0 (off) to 120 (on).
   
     def get_slow_pwm(self, relayNum):
-        """
-            Gets the value for the slow PWM signal. Can be anywhere from 0 (off) to 120 (on).
-            
-            :param: The relay to get the PWM signal of
-            :return: The value of the PWM signal, a value between 0 and 120
-            :rtype: bool
+        """!
+        Gets the value for the slow PWM signal. Can be anywhere from 0 (off) to 120 (on).
+
+        @param : The relay to get the PWM signal of
+
+        @return **bool** The value of the PWM signal, a value between 0 and 120
         """
         for i in range(4):
             if self.address == self.available_addresses[i]:
@@ -305,11 +321,10 @@ class QwiicRelay(object):
     # Returns the status of the relayNum you pass to it. Do not pass in a relay number if you are using a single relay.
     
     def get_relay_state(self, relayNum=None):
-        """
-            Returns true if the relay is currently on, and false if it is off.
- 
-            :return: Status of the relay
-            :rtype: bool
+        """!
+        Returns true if the relay is currently on, and false if it is off.
+
+        @return **bool** Status of the relay
         """
         
         if relayNum is None:
@@ -326,11 +341,10 @@ class QwiicRelay(object):
     # Returns the firmware version for the Single Relay
 
     def get_version(self):
-        """
-            Returns the firmware version for the Single Relay
+        """!
+        Returns the firmware version for the Single Relay
 
-            :return: The firmware version
-            :rtype: string
+        @return **string** The firmware version
         """
 
         return self._i2c.readByte(self.address, SINGLE_FIRMWARE_VERSION)

@@ -1,2 +1,2 @@
-m2r2
+m2r
 sparkfun-qwiic-i2c
