@@ -31,7 +31,10 @@ New to qwiic? Take a look at the entire [SparkFun qwiic ecosystem](https://www.s
 
 This Python package supports the following SparkFun qwiic products on Python, MicroPython and Circuit python. 
 
-* [SparkFun Relay Sensor - RELAY](http://www.sparkfun.com/qwiic)
+* [SparkFun Qwiic Single Relay](https://www.sparkfun.com/sparkfun-qwiic-single-relay.html)
+* [SparkFun Qwiic Quad Relay](https://www.sparkfun.com/sparkfun-qwiic-quad-relay.html)
+* [SparkFun Qwiic Dual Solid State Relay](https://www.sparkfun.com/sparkfun-qwiic-dual-solid-state-relay.html)
+* [SparkFun Qwiic Quad Solid State Relay](https://www.sparkfun.com/sparkfun-qwiic-quad-solid-state-relay-kit.html)
 
 ### Supported Platforms
 
